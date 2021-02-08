@@ -27,13 +27,11 @@ class Neuron {
     }
 
     spike() {
-        console.log(this.id);
         this.p_synapse = 1;
     }
 
     transmit_spikes() {
         // no logic is required, p_synapse will be 0 until spiked, so blindly add
-        if(this.p_synapse > 0) console.log('transmit');
         this.synapse_neurons.forEach((synapse_neuron) => {
             synapse_neuron.receive_spike(this.id, this.p_synapse)
         });
@@ -43,18 +41,13 @@ class Neuron {
 
     receive_spike(neuron_id, p_synapse) {
         this.p_in += this.in_weights[neuron_id] * p_synapse;
-        if(p_synapse > 0) {
-            console.log(this.p_in);
-        }
     }
 
     calculate_p(p_prev, p_in, p_min, p_thresh, p_rest, p_refract, d) {
-        console.log(this.id, p_prev);
         if (p_min < p_prev && p_prev < p_thresh){
             return p_in + p_prev - d; 
         } 
         else if (p_prev >= p_thresh) {
-            console.log('spiked');
             return p_refract;
         }
         else if (p_prev <= p_min) return p_rest;
