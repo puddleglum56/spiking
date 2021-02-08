@@ -29,8 +29,8 @@ function graph(neurons, connections) {
                 id: e,
                 source: connection[0],
                 target: connection[1],
-                type: 'arrow',
-                size: 3
+                size: 3,
+                type: 'arrow'
             }
         )
         e += 1;
@@ -42,6 +42,7 @@ function graph(neurons, connections) {
             container: 'graph-container',
             settings: {
                 defaultNodeColor: '#ec5148',
+                autoRescale: ['nodePosition', 'nodeSize']
             }
         }
     );
