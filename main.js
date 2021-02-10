@@ -46,14 +46,20 @@ class Neuron {
     remove_old_spikes() {
         this.presynaptic_spike_buffer = this.presynaptic_spike_buffer.filter((presynaptic_spike) => {
             presynaptic_spike.t > this.last_spike_t;
+            if (presynaptic_spike.t <= this.last_spike_t) {
+                console.log('Removing old spike', presynaptic_spike);
+            }
         });
     }
 
     update_weights() {
         // const presynaptic_spike = this.find_nearest_neighbor_spike();
-        console.log(this.presynaptic_spike_buffer);
+        console.log('Presynaptic spike buffer at weight update', this.presynaptic_spike_buffer);
+        console.log('Last spike time', this.last_spike_t);
         this.presynaptic_spike_buffer.forEach((presynaptic_spike) => {
-            const dt = presynaptic_spike.t - this.last_spike_t;
+            // const dt = presynaptic_spike.t - this.last_spike_t;
+            const dt = this.last_spike_t - presynaptic_spike.t;
+            console.log('Calculated delta t as', dt);
             const weight_delta = this.weight_delta(dt);
             console.log('Neuron', presynaptic_spike.id,'weight changed by',weight_delta)
             const w_old = this.in_weights[presynaptic_spike.id];
@@ -63,6 +69,7 @@ class Neuron {
     }
 
     find_nearest_neighbor_spike() {
+        // unused: too complicated, went for all-spike comparison instead
         return min_abs_diff(this.presynaptic_spike_buffer, this.last_spike_t);
     }
 
@@ -118,10 +125,6 @@ function min_abs_diff(arr, value) {
     return arr[min_i];
 }
 
-function generate_weight() {
-    return 1.0;
-}
-
 function add_neuron(neurons) {
     neuron = new Neuron(neurons.length, constants, p_init, p_init);
     neurons.push(neuron);
@@ -148,21 +151,29 @@ function build_neurons(num_neurons, connections, constants, p_init) {
     return neurons;
 }
 
+function generate_weight() {
+    // default synapse weight
+    return 1.0;
+}
+
 function setup_neurons(num_neurons, connections) {
    p_init = 0.0;
    constants = {
+       // spiking parameters
        p_min: -1.0,
-       p_thresh: 4.0,
+       p_thresh: 6.0,
        p_rest: 0.0,
        p_refract: -1.0,
        d: 0.1,
+
+       // learning parameters
        a_plus: 0.2,
-       a_minus: 0.1,
-       tau_plus: 8,
+       a_minus: -0.2,
+       tau_plus: 5,
        tau_minus: 5,
        w_min: 0.5,
        w_max: 3.0,
-       o: 1.0,
+       o: 0.2,
    }
 
    neurons = build_neurons(num_neurons, connections, constants, p_init);
