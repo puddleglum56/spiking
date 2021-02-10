@@ -198,6 +198,8 @@ function sim(neurons, s) {
 }
 
 window.onload = () => {
+    console.log('Please read README.md!');
+
     num_neurons = 4;
     connections = [
         [0, 2],
