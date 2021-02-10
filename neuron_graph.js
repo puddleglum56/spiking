@@ -56,7 +56,7 @@ function graph(neurons, connections) {
         neurons[node_id].spike();
     });
 
-    s.bind('rightClickNode', (e) => {
+    s.bind('rightClick', (e) => {
         node_id = e.data.node.id;
 
     });
