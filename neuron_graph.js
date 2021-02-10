@@ -39,10 +39,14 @@ function graph(neurons, connections) {
     s = new sigma(
         {
             graph: data,
-            container: 'graph-container',
+            renderer: {
+                container: 'graph-container',
+                type: 'canvas'
+            },
             settings: {
                 defaultNodeColor: '#ec5148',
-                autoRescale: ['nodePosition', 'nodeSize']
+                autoRescale: ['nodePosition', 'nodeSize'],
+                edgeLabelSize: 'proportional'
             }
         }
     );
