@@ -44,12 +44,7 @@ class Neuron {
     }
 
     remove_old_spikes() {
-        this.presynaptic_spike_buffer = this.presynaptic_spike_buffer.filter((presynaptic_spike) => {
-            presynaptic_spike.t > this.last_spike_t;
-            if (presynaptic_spike.t <= this.last_spike_t) {
-                console.log('Removing old spike', presynaptic_spike);
-            }
-        });
+        this.presynaptic_spike_buffer = this.presynaptic_spike_buffer.filter(presynaptic_spike => presynaptic_spike.t > this.last_spike_t);
     }
 
     update_weights() {
@@ -168,7 +163,7 @@ function setup_neurons(num_neurons, connections) {
 
        // learning parameters
        a_plus: 0.2,
-       a_minus: -0.2,
+       a_minus: -0.6,
        tau_plus: 5,
        tau_minus: 5,
        w_min: 0.5,
