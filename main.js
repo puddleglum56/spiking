@@ -26,8 +26,6 @@ class Neuron {
         this.p = this.calculate_p(this.p_prev, this.p_in, this.constants.p_min, this.constants.p_thresh, this.constants.p_rest, this.constants.p_refract, this.constants.d);
         if (this.p >= this.constants.p_thresh) {
             this.spike()
-            if (this.presynaptic_spike_buffer.length > 0 && this.last_spike_t) this.update_weights()
-            this.last_spike_t = 0;
         }
         this.p_prev = this.p;
         this.p_in = 0.0;
@@ -37,37 +35,38 @@ class Neuron {
 
     spike() {
         this.p_synapse = 1;
+
+        if (this.presynaptic_spike_buffer.length > 0 && this.last_spike_t) {
+            this.update_weights();
+            this.remove_old_spikes();
+        } 
+        this.last_spike_t = 0;
+    }
+
+    remove_old_spikes() {
+        this.presynaptic_spike_buffer = this.presynaptic_spike_buffer.filter((presynaptic_spike) => {
+            presynaptic_spike.t > this.last_spike_t;
+        });
     }
 
     update_weights() {
         // const presynaptic_spike = this.find_nearest_neighbor_spike();
-        // if (this.id == 1) {
-        //     console.log('update weights')
-        //     console.log(this.presynaptic_spike_buffer)
-        //     console.log(presynaptic_spike.t, this.last_spike_t)
-        // }
+        console.log(this.presynaptic_spike_buffer);
         this.presynaptic_spike_buffer.forEach((presynaptic_spike) => {
             const dt = presynaptic_spike.t - this.last_spike_t;
             const weight_delta = this.weight_delta(dt);
-            console.log(presynaptic_spike.id, weight_delta)
+            console.log('Neuron', presynaptic_spike.id,'weight changed by',weight_delta)
             const w_old = this.in_weights[presynaptic_spike.id];
             const new_weight = this.new_weight(weight_delta, w_old);
-            console.log(presynaptic_spike.id, new_weight)
             this.in_weights[presynaptic_spike.id] = new_weight;
         });
     }
 
     find_nearest_neighbor_spike() {
-        if (this.id == 1) {
-            console.log('find nearest')
-            console.log(this.presynaptic_spike_buffer)
-            console.log(this.last_spike_t)
-        }
         return min_abs_diff(this.presynaptic_spike_buffer, this.last_spike_t);
     }
 
     weight_delta(dt) {
-        var dw;
         if (dt <= -2) return this.constants.a_minus * Math.exp(dt / this.constants.tau_minus);
         else if (-2 < dt && dt < 2) return 0;
         else if (dt >= 2) return this.constants.a_plus * Math.exp(dt / this.constants.tau_plus);
@@ -79,7 +78,6 @@ class Neuron {
     }
 
     transmit_spikes() {
-        // no logic is required, p_synapse will be 0 until spiked, so blindly add
         if (this.p_synapse) {
             this.synapse_neurons.forEach((synapse_neuron) => {
                 synapse_neuron.receive_spike(this.id, this.p_synapse)
@@ -124,19 +122,27 @@ function generate_weight() {
     return 1.0;
 }
 
+function add_neuron(neurons) {
+    neuron = new Neuron(neurons.length, constants, p_init, p_init);
+    neurons.push(neuron);
+}
+
+function add_connection(neurons, connection) {
+    neuron = neurons[connection[0]];
+    synapse_neuron = neurons[connection[1]];
+    neuron.synapse_neurons.push(synapse_neuron);
+    synapse_neuron.in_weights[neuron.id] = generate_weight();
+}
+
 function build_neurons(num_neurons, connections, constants, p_init) {
     var neurons = [];
 
     for (i = 0; i < num_neurons; i++) {
-        neuron = new Neuron(i, constants, p_init, p_init);
-        neurons.push(neuron);
+        add_neuron(neurons);
     }
 
     connections.forEach((connection) => {
-        neuron = neurons[connection[0]];
-        synapse_neuron = neurons[connection[1]];
-        neuron.synapse_neurons.push(synapse_neuron);
-        synapse_neuron.in_weights[neuron.id] = generate_weight();
+        add_connection(neurons, connection);
     });
 
     return neurons;
@@ -177,6 +183,7 @@ function sim(neurons, s) {
         e.size = 3 * neurons[e.target].in_weights[e.source];
         e.label = neurons[e.target].in_weights[e.source];
     });
+    
     s.refresh();
     // next, transmit spikes for the next tick
     neurons.forEach((neuron) => {
