@@ -1,5 +1,6 @@
-### Synthetic Agent - William McFadden
 ### Javascript Spiking Neural Network
+
+Demo: [here](https://puddleglum56.github.io/spiking/)
 
 This is a spiking neural network simulator in Javascript, which simulates the two main components of a spiking neural network:
 1. spiking summation and transmission
