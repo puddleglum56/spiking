@@ -1,6 +1,6 @@
 ### Javascript Spiking Neural Network
 
-<img src="https://github.com/puddleglum56/mind/blob/main/demo.gif" alt="demo" max-height="600"/>
+<img src="https://github.com/puddleglum56/spiking/blob/main/demo.gif" alt="demo" max-height="600"/>
 
 Demo: [here](https://puddleglum56.github.io/spiking/)
 
