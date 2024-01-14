@@ -1,4 +1,4 @@
-### Javascript Spiking Neural Network
+### Javascript STDP
 
 <img src="https://github.com/puddleglum56/spiking/blob/main/demo.gif" alt="demo" max-height="600"/>
 
