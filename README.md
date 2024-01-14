@@ -1,5 +1,7 @@
 ### Javascript Spiking Neural Network
 
+<img src="https://github.com/puddleglum56/mind/blob/main/demo.gif" alt="demo" max-height="600"/>
+
 Demo: [here](https://puddleglum56.github.io/spiking/)
 
 This is a spiking neural network simulator in Javascript, which simulates the two main components of a spiking neural network:
